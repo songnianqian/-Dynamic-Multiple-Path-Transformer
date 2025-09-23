@@ -1,0 +1,216 @@
+Multi_LM Header training
+
+Training Phase A (confirm correct)
+
+%run multi_headers_training.py \
+  --total_steps 30000 \
+  --use_mixture \
+  --head_lr 3e-6 --gate_lr 1e-5 \
+  --freeze_head0_steps 5000 \
+  --moe_kl_to_hf_coef 0.01 \
+  --moe_load_balance_coef 0.02 \
+  --moe_gate_entropy_coef 0.001 \
+  --mixture_tau_start 1.0 --mixture_tau_end 0.5 \
+  --mixture_sparse_after 999999 \
+  --eval_every 2000 --save_every 5000
+
+Phase B (soft, 30k→80k):
+%run multi_headers_training.py \
+--resume .../checkpoint_step_30000.pt
+  --total_steps 80000 \
+  --use_mixture \
+--phase auto --phase_a_end 30000 --phase_b_end 80000 \
+--mixture_tau_sched const --mixture_tau_mid 0.5 \
+--moe_load_balance_coef 0.02 --moe_kl_to_hf_coef 0.0
+  --head_lr 3e-6 --gate_lr 1e-5 \
+  --freeze_head0_steps 5000 \
+  --moe_kl_to_hf_coef 0.01 \
+  --moe_load_balance_coef 0.02 \
+  --moe_gate_entropy_coef 0.001 \
+  --mixture_tau_start 1.0 --mixture_tau_end 0.5 \
+  --mixture_sparse_after 999999 \
+  --eval_every 2000 --save_every 5000
+
+
+Phase C (sparse/hard, 80k→120k):
+
+%run multi_headers_training.py \
+  --use_mixture \
+  --resume /content/drive/MyDrive/Project1/multi-headers_training_checkpoint/checkpoint_step_115000.pt \
+  --total_steps 120000 \
+  --phase auto --phase_a_end 30000 --phase_b_end 80000 \
+  --max_length 512 --eval_stride 512 \
+  --top_k 1 --compute_only_selected \
+  --mixture_tau_sched linear --mixture_tau_mid 0.35 --mixture_tau_end 0.25 \
+  --moe_load_balance_coef 0.02 --moe_diversity_coef 0.0 --moe_kl_to_hf_coef 0.0 \
+  --lr 0.0 --head_lr 5e-7 --gate_lr 1e-6 \
+  --eval_every 1000 --save_every 5000 \
+  --seed 42
+
+
+Phase D
+
+  %run multi_headers_training.py \
+--use_mixture \
+--resume /content/drive/MyDrive/Project1/multi-headers_training_checkpoint/checkpoint_step_120000.pt \
+--total_steps 160000 --phase C --mixture_tau_sched const --mixture_tau_end 0.35 \
+--top_k 2 --no-compute_only_selected \
+--max_length 512 --eval_stride 512 \
+--moe_load_balance_coef 0.03 \
+--moe_diversity_coef 0.003 \
+--moe_gate_entropy_coef 0.0015 --entropy_target_frac 0.55 \
+--freeze_head0_steps 15000 \
+--moe_kl_to_hf_coef 0.0002 \
+--eval_every 5000 --save_every 20000
+
+
+Phase E — low-LR full-dataset continuation (soft top-2, compute all heads)
+%run multi_headers_training.py \
+  --use_mixture \
+  --resume /content/drive/MyDrive/Colab\ Notebooks/Project1/multi-headers_training_checkpoint/checkpoint_step_160000.pt \
+  --total_steps 200000 \            
+  --phase C \
+  --top_k 2 --no-compute_only_selected \
+  --mixture_tau_sched const --mixture_tau_end 0.34 \
+  --moe_load_balance_coef 0.02 \
+  --moe_diversity_coef 0.002 \
+  --moe_gate_entropy_coef 0.001 --entropy_target_frac 0.55 \
+  --max_length 512 --eval_stride 512 \
+  --eval_every 1000 --save_every 10000 \
+  --lr 1e-5         
+
+Phase F — short polish aligned to your fast path (hard top-1)
+%run multi_headers_training.py \
+  --use_mixture \
+  --resume /content/drive/MyDrive/Colab\ Notebooks/Project1/multi-headers_training_checkpoint/checkpoint_step_200000.pt \
+  --total_steps 210000 \           
+  --phase C \
+  --top_k 1 --compute_only_selected \
+  --mixture_tau_sched const --mixture_tau_end 0.32 \
+  --moe_load_balance_coef 0.0 \
+  --moe_diversity_coef 0.0 \
+  --moe_gate_entropy_coef 0.0 \
+  --max_length 512 --eval_stride 512 \
+  --eval_every 1000 --save_every 10000
+  --lr 8e-6
+
+
+Dual path training
+
+Phase A
+%run dual_path_training.py \
+  --pretrained_model gpt2 \
+  --split_at_layer 6 \
+  --max_length 256 \
+  --epochs 2 \
+  --batch_size 4 \
+  --grad_accum_steps 1 \
+  --lr 2e-5 \
+  --weight_decay 0.01 \
+  --warmup_steps 1000 \
+  --train_path_selection gate_soft \
+  --eval_path_selection gate_soft
+
+
+Phase B
+%run dual_path_training.py \
+  --pretrained_model gpt2 \
+  --split_at_layer 6 \
+  --max_length 256 \
+  --epochs 1 \
+  --batch_size 2 \
+  --grad_accum_steps 1 \
+  --lr 2e-5 \
+  --weight_decay 0.01 \
+  --warmup_steps 1000 \
+  --train_path_selection gate_soft \
+  --eval_path_selection gate_soft \
+  --resume "/content/drive/My Drive/Project1/dual_path_checkpoints/checkpoint_step_55000.pt" \
+  --log_every 100 \
+  --eval_every 500 \
+  --save_every 1000
+
+phase B harden
+%run dual_path_training.py \
+  --resume "/content/drive/My Drive/Project1/dual_path_checkpoints/checkpoint_step_55000.pt" \
+  --phase_b_start 0 \
+  --phase_b_ramp1 500 \
+  --phase_b_ramp2 1500 \
+  --phase_b_max 0.5 \
+  --gate_temp_target 1.0 \
+  --train_path_selection gate_soft \
+  --eval_path_selection gate_soft \
+  --max_length 256 \
+  --epochs 1 \
+  --batch_size 4 \
+  --grad_accum_steps 1 \
+  --lr 2e-5 \
+  --max_steps  8000 \
+  --log_every 500 \
+  --eval_every 1000 \
+  --save_every 2000
+
+
+Dual path multi headers training
+
+Phase A
+%run training.py \
+  --pretrained_model gpt2 \
+  --split_at_layer 6 \
+  --max_length 192 \
+  --epochs 1 --max_steps 30000 \
+  --batch_size 4 --grad_accum_steps 12 \
+  --lr 2e-5 --head_lr 3e-6 --gate_lr 1e-5 \
+  --use_head_mixture \
+  --n_lm_perceptrons 8 \
+  --head_allocation "/content/drive/My Drive/Project1/dual_path_header_training/head_allocation.json" \
+  --head_gate_temp 1.0 \
+  --freeze_split_gates \
+  --train_path_selection gate_hard \
+  --eval_path_selection  gate_hard \
+  --freeze_head0_steps 5000 \
+  --lb_coef 0.0 --gold_aux_coef 0.0 \   # auto-zero when gates frozen, or set manually
+  --head_lb_coef 1e-3 --head_entropy_coef 5e-4 \
+  --eval_every 2000 --save_every 5000 \
+  --init_from_dual "/content/drive/My Drive/Project1/dual_path_checkpoints/checkpoint_step_20000.pt"
+
+%run training.py \
+  --resume "/content/drive/My Drive/Project1/dual_path_multi_headers_checkpoints/checkpoint_epoch_0_step_120000.pt" \
+  --epochs 1 --max_steps 8200 \
+  --train_path_selection gate_soft \
+  --eval_path_selection gate_hard \
+  --head_allocation "/content/drive/My Drive/Project1/dual_path_header_training/head_allocation.json" \
+  --lb_coef 0.02 \
+  --gold_aux_coef 0.01 \
+  --head_gate_temp 0.9 \
+  --head_lr 3e-6 --gate_lr 2e-6 \
+--eval_every 500 --save_every 2050 \
+--max_length 256 \
+  --batch_size 1 --grad_accum_steps 12 --n_lm_perceptrons 8 --use_head_mixture
+
+
+Final Phase
+%run training.py \
+--resume "/content/drive/My Drive/Project1/dual_path_multi_headers_checkpoints/checkpoint_epoch_0_step_20000.pt" \
+--epochs 1 \
+--max_steps 12000 \
+--train_path_selection gate_hard \
+--eval_path_selection gate_hard \
+--head_allocation "/content/drive/My Drive/Project1/dual_path_header_training/head_allocation.json" \
+--freeze_schedule "/content/drive/My Drive/Project1/freeze_config.json" \
+--lb_coef 0.0 \
+--gold_aux_coef 0.0 \
+--tether_coef 1e-3 \
+--head_gate_temp 0.1 \
+--lr 1e-5 \
+--head_lr 2e-6 \
+--gate_lr 0.0 \
+--eval_every 500 \
+--save_every 2000 \
+--max_length 256 \
+--batch_size 1 \
+--grad_accum_steps 12 \
+--n_lm_perceptrons 8 \
+--use_head_mixture \
+--freeze_split_gates
+

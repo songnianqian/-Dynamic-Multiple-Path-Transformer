@@ -171,4 +171,3 @@ MIT (see LICENSE).
 
 - Built on top of HuggingFace Transformers and GPT-2.
 - Thanks to the open-source ML community.
-

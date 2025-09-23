@@ -1,0 +1,16 @@
+{
+  "0": {
+    "shared": true,
+    "left_intermediate": true,
+    "right_intermediate": false,
+    "left_right": true,
+    "right_left": false,
+    "right_right": false,
+    "gate1": false,
+    "gate2_left": true,
+    "gate2_right": false
+  },
+  "6000": { "gate1": true },
+  "10000": { "left_right": false, "gate2_left": false },
+  "16000": { "gate2_left": true, "gate2_right": true }
+}

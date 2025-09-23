@@ -1,0 +1,11 @@
+{
+  "0": {
+    "shared": false,
+    "left_path": true,
+    "right_path": false,
+    "gate": true,
+    "lm_headers": {
+      "0": true
+    }
+  }
+}
