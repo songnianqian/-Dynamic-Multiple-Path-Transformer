@@ -49,12 +49,15 @@ Together, multi-path routing and multi-header outputs give DMPT:
 
 ```
 .
-├─ dual_path_multi_headers_model.py   # Dual/quad path GPT-2 + multi-LM headers
-├─ multi_headers_model.py             # Gating/LM-header utilities
-├─ trainer.py                         # Training loop, losses, logging
-├─ training.py                        # CLI entrypoint and helpers
-├─ head_allocation.json               # Example per-path head allocation
+├─ src                             # Python source
+  ├─ multi_headers                 # multi_headers model and training scripts
+  ├─ dual_path_multi_headers        # dual path multi_headers model and training scripts
+  ├─ dual_path_multi_headers        # quad path multi_headers model and training scripts
+  ├─ utils                         # benchmark scripts
+├─ benchmark                       # benchmark scripts
+├─ docs                            # commands and documents
 └─ README.md
+└─ LICENSE
 ```
 
 ---
