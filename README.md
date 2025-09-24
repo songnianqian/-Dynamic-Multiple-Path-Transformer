@@ -53,7 +53,7 @@ Together, multi-path routing and multi-header outputs give DMPT:
   ├─ multi_headers                 # multi_headers model and training scripts
   ├─ dual_path_multi_headers        # dual path multi_headers model and training scripts
   ├─ quad_path_multi_headers        # quad path multi_headers model and training scripts
-  ├─ utils                         # benchmark scripts
+  ├─ utils                         # util scripts
 ├─ benchmark                       # benchmark scripts
 ├─ docs                            # commands and documents
 └─ README.md
