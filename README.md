@@ -9,7 +9,7 @@ A GPT-2–compatible, **multi-path** transformer that adds capacity with **~10% 
 The standard Transformer architecture is built from a **serial stack of attention + MLP blocks**, each layer refining the representation before passing it to the next.  
 While powerful, this design lacks **parallelism** in representation flow — every token must follow the same path.  
 
-The **Dynamic Multiple Path Transformer (DMPT)** introduces *multiple expert paths* inside the backbone. By splitting the model at specific layers (e.g., 6 or 9), DMPT enables **parallel representation learning**, where different paths can specialize in different aspects of language.
+The **Dynamic Multiple Path Transformer (DMPT)** introduces *multiple expert paths* inside the backbone. By splitting the model at specific layers (e.g., 6 and 9), DMPT enables **parallel representation learning**, where different paths can specialize in different aspects of language.
 
 Another key observation is that **next-word prediction depends heavily on the distribution of output vectors**.  
 Clusters and neighborhood structures of these vectors make the transformer effective. With **multiple LM headers**, DMPT can support *multiple clusters* and *diverse neighborhood distributions*, enabling the model to handle **different domain knowledge** simultaneously.
