@@ -23,10 +23,10 @@ Together, multi-path routing and multi-header outputs give DMPT:
 
 ## 🔥 Results (WikiText-103, stride-concat eval)
 
-| Model               | Perplexity ↓ | Accuracy ↑ | Notes |
-|---------------------|--------------|------------|-------|
-| HF GPT-2 Baseline   | **38.306**   | **35.04%** | reference |
-| **DMPT (Dual Path)**| **30.442**   | **39.47%** | +~10% on both metrics |
+| Model                              | Perplexity ↓ | Accuracy ↑ | Notes |
+|------------------------------------|--------------|------------|-------|
+| HF GPT-2 Baseline                  | **38.306**   | **35.04%** | reference |
+| **DMPT (Dual Path 8 LM Headers)  **| **30.442**   | **39.47%** | +~10% on both metrics |
 
 - Tokens evaluated: 280,232  
 - Baseline sum logprob: −1,021,618.53  
