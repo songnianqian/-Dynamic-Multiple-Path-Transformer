@@ -92,19 +92,25 @@ python training.py   --resume checkpoints/dual_path/checkpoint_epoch_0_step_1200
 ```
 
 ### 3) Evaluate perplexity & accuracy
+
+DMPT uses a **black-box evaluation system** — the script only requires standard token probabilities from the model and computes perplexity & accuracy independently.  
+This avoids mistakes from relying on internal model states and makes comparison across models consistent.
+
 ```bash
-# Uses a safe eval that computes logprobs, ppl, and token accuracy
-python -c "from training import eval_ppl_safe; print('Use the provided scripts in your pipeline')"  # placeholder
-```
-
+# Example: run black-box eval on a trained checkpoint
+python benchmark/eval_blackbox.py \
+  --checkpoint checkpoints/dual_path/checkpoint_step_8000.pt \
+  --dataset wikitext103_test.json \
+  --out results/eval_dual.json
+The script will output:
+Perplexity
+Accuracy
+Sum log-probabilities
 > Tip: You can also integrate your own stride-concat evaluator; the model returns either logits or log-probs depending on flags.
-
 ### 4) Quick greedy preview
 ```bash
 python -c "from training import quick_preview_greedy; print('See training.py for quick_preview_greedy() usage')"  # placeholder
 ```
-
----
 
 ## ⚙️ Configuration
 
