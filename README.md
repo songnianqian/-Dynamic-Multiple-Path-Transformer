@@ -165,6 +165,7 @@ MIT (see LICENSE).
 ## 📚 Citation
 
 - Vaswani et al., 2017. Attention Is All You Need.
+- Shazeer, Noam. GLU Variants Improve Transformer. arXiv:2002.05202, 2020.
 - S. Qian, Y.C. Lee, et al., 1990, Adaptive stochastic cellular automata: Applications 
 
 ---
