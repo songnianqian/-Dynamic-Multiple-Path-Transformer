@@ -165,8 +165,7 @@ MIT (see LICENSE).
 ## 📚 Citation
 
 - Vaswani et al., 2017. Attention Is All You Need.
-- Adaptive stochastic cellular automata: Applications, S. Qian, Y.C. Lee, R.D. Jones, C.W. Barnes, G.W. Flake, M.K. O'Rourke, K. Lee, H.H. Chen, G.Z. Sun, Y.Q. Zhang, D. Chen and C.L. Giles, Physica D, 45(1), 1990 
-- Adaptive stochastic cellular automata: Theory, Y.C. Lee, S. Qian, R.D. Jones, C.W. Barnes, G.W. Flake, M.K. O'Rourke, K. Lee, H.H. Chen, G.Z. Sun, Y.Q. Zhang, D. Chen and C.L. Giles, Physica D, 45(1), 1990
+- S. Qian, Y.C. Lee, et al., 1990, Adaptive stochastic cellular automata: Applications 
 
 ---
 
